@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ガードプール - ダッシュボード</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard">
+    <header class="header">
+        <h1>🛡️ ガードプール</h1>
+        <div class="user-info">
+            <span id="companyName">読み込み中...</span>
+            <button class="btn-logout" onclick="logout()">ログアウト</button>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="action-buttons">
+            <button class="btn-post btn-available" onclick="showPostForm('available')">
+                🔵 人が余ってます
+            </button>
+            <button class="btn-post btn-needed" onclick="showPostForm('needed')">
+                🔴 人が足りません
+            </button>
+        </div>
+        
+        <div class="posts-section">
+            <h2>📋 最新の投稿</h2>
+            <div id="postsList">
+                <p>読み込み中...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="config.js"></script>
+    <script type="module" src="app.js"></script>
+</body>
+</html>
