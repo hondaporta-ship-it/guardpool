@@ -33,14 +33,98 @@
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // Supabase設定
-        const SUPABASE_URL = 'https://lrfaifhmqtxycvytfcuv.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_XoFkG_ZulQQNSD5604cGbQ_6F13TB_k';
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="app.js"></script>
-    
-</body>
-</html>
+    <!-- 投稿フォームモーダル -->
+    <div id="postModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">投稿フォーム</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="postForm">
+                <input type="hidden" id="postType" name="postType">
+                
+                <div class="form-group">
+                    <label for="postDate">対象日 *</label>
+                    <input type="date" id="postDate" name="postDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>勤務時間帯 *</label>
+                    <div class="shift-options">
+                        <label class="shift-option">
+                            <input type="radio" name="shiftType" value="day" required>
+                            <span class="shift-label">☀️ 日勤</span>
+                        </label>
+                        <label class="shift-option">
+                            <input type="radio" name="shiftType" value="night">
+                            <span class="shift-label">🌙 夜勤</span>
+                        </label>
+                        <label class="shift-option">
+                            <input type="radio" name="shiftType" value="both">
+                            <span class="shift-label">🔄 どちらでも</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="peopleCount">人数 *</label>
+                    <select id="peopleCount" name="peopleCount" required>
+                        <option value="">選択してください</option>
+                        <option value="1">1名</option>
+                        <option value="2">2名</option>
+                        <option value="3">3名</option>
+                        <option value="4">4名</option>
+                        <option value="5">5名</option>
+                        <option value="6">6名</option>
+                        <option value="7">7名</option>
+                        <option value="8">8名</option>
+                        <option value="9">9名</option>
+                        <option value="10">10名以上</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="area">エリア *</label>
+                    <select id="area" name="area" required>
+                        <option value="">選択してください</option>
+                        <option value="福岡市中央区">福岡市中央区</option>
+                        <option value="福岡市博多区">福岡市博多区</option>
+                        <option value="福岡市東区">福岡市東区</option>
+                        <option value="福岡市西区">福岡市西区</option>
+                        <option value="福岡市南区">福岡市南区</option>
+                        <option value="福岡市城南区">福岡市城南区</option>
+                        <option value="福岡市早良区">福岡市早良区</option>
+                        <option value="北九州市">北九州市</option>
+                        <option value="久留米市">久留米市</option>
+                        <option value="福岡県その他">福岡県その他</option>
+                        <option value="佐賀県">佐賀県</option>
+                        <option value="長崎県">長崎県</option>
+                        <option value="熊本県">熊本県</option>
+                        <option value="大分県">大分県</option>
+                        <option value="宮崎県">宮崎県</option>
+                        <option value="鹿児島県">鹿児島県</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="jobType">業務内容 *</label>
+                    <select id="jobType" name="jobType" required>
+                        <option value="">選択してください</option>
+                        <option value="施設警備">施設警備</option>
+                        <option value="交通誘導">交通誘導</option>
+                        <option value="イベント警備">イベント警備</option>
+                        <option value="雑踏警備">雑踏警備</option>
+                        <option value="巡回警備">巡回警備</option>
+                        <option value="駐車場警備">駐車場警備</option>
+                        <option value="その他">その他</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="note">備考（任意）</label>
+                    <textarea id="note" name="note" rows="3" placeholder="追加情報があれば入力してください"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeModal()">キャンセル</butto

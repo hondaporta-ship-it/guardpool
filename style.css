@@ -1,3 +1,5 @@
+/* ガードプール - スタイルシート */
+
 * {
     margin: 0;
     padding: 0;
@@ -5,94 +7,95 @@
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
     min-height: 100vh;
 }
 
-.login-page {
+/* ログインページ */
+.login-container {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    padding: 1rem;
 }
 
-.login-container {
+.login-box {
     background: white;
-    padding: 3rem;
+    padding: 2.5rem;
     border-radius: 1rem;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    width: 90%;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    width: 100%;
     max-width: 400px;
     text-align: center;
 }
 
-.logo {
-    margin-bottom: 1.5rem;
-    display: flex;
-    justify-content: center;
-}
-
-h1 {
-    color: #1e3a8a;
-    font-size: 2rem;
+.login-box h1 {
+    color: #1e3a5f;
     margin-bottom: 0.5rem;
+    font-size: 1.8rem;
 }
 
-.subtitle {
-    color: #64748b;
+.login-box .subtitle {
+    color: #666;
     margin-bottom: 2rem;
-    font-size: 0.9rem;
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
     text-align: left;
 }
 
-label {
+.form-group label {
     display: block;
-    color: #475569;
     margin-bottom: 0.5rem;
-    font-weight: 500;
-    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
 }
 
-input {
+.form-group input,
+.form-group select,
+.form-group textarea {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.75rem 1rem;
     border: 2px solid #e2e8f0;
     border-radius: 0.5rem;
     font-size: 1rem;
-    transition: border-color 0.3s;
+    transition: border-color 0.2s;
 }
 
-input:focus {
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
     outline: none;
     border-color: #3b82f6;
 }
 
-.btn-primary {
+.btn-login {
     width: 100%;
-    padding: 0.875rem;
-    background: #1e3a8a;
+    padding: 1rem;
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
     color: white;
     border: none;
     border-radius: 0.5rem;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: background 0.3s;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.btn-primary:hover {
-    background: #1e40af;
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 .error-message {
-    color: #ef4444;
+    background: #fef2f2;
+    color: #dc2626;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
     margin-top: 1rem;
-    font-size: 0.9rem;
     display: none;
 }
 
@@ -100,25 +103,23 @@ input:focus {
     display: block;
 }
 
-/* Dashboard styles */
-.dashboard {
+/* ダッシュボード */
+body.dashboard {
     background: #f1f5f9;
 }
 
 .header {
-    background: #1e3a8a;
+    background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
     color: white;
-    padding: 1rem 2rem;
+    padding: 1rem 1.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .header h1 {
-    color: white;
     font-size: 1.5rem;
-    margin: 0;
 }
 
 .user-info {
@@ -128,21 +129,26 @@ input:focus {
 }
 
 .btn-logout {
-    background: #ef4444;
+    background: rgba(255,255,255,0.2);
     color: white;
+    border: 1px solid rgba(255,255,255,0.3);
     padding: 0.5rem 1rem;
-    border: none;
     border-radius: 0.5rem;
     cursor: pointer;
-    font-size: 0.9rem;
+    transition: background 0.2s;
+}
+
+.btn-logout:hover {
+    background: rgba(255,255,255,0.3);
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 1.5rem;
 }
 
+/* アクションボタン */
 .action-buttons {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -152,33 +158,109 @@ input:focus {
 
 .btn-post {
     padding: 1.5rem;
-    border: none;
-    border-radius: 0.75rem;
     font-size: 1.1rem;
     font-weight: 600;
+    border: none;
+    border-radius: 1rem;
     cursor: pointer;
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .btn-post:hover {
-    transform: translateY(-2px);
+    transform: translateY(-3px);
 }
 
 .btn-available {
-    background: #3b82f6;
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: white;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+}
+
+.btn-available:hover {
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
 
 .btn-needed {
-    background: #ef4444;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: white;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
 }
 
-.posts-section {
+.btn-needed:hover {
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+/* 投稿セクション */
+.posts-section h2 {
+    color: #1e3a5f;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.section-title {
+    margin: 1.5rem 0 1rem 0;
+    padding: 0.5rem 0;
+    font-size: 1.1rem;
+}
+
+.available-title {
+    color: #2563eb;
+}
+
+.needed-title {
+    color: #dc2626;
+}
+
+/* デモ通知 */
+.demo-notice {
+    background: #fef3c7;
+    color: #92400e;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+/* 投稿カード */
+.post-card {
     background: white;
-    padding: 2rem;
     border-radius: 0.75rem;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-left: 4px solid;
 }
 
-.posts-sect
+.post-card.available {
+    border-left-color: #3b82f6;
+}
+
+.post-card.needed {
+    border-left-color: #ef4444;
+}
+
+.post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.company-name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #1e3a5f;
+}
+
+.post-date {
+    color: #666;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+/* 勤務時間帯バッジ */
+.shift-badge {
+    padding: 0.35rem 0.75rem;
+    border-radius: 2rem;
+    font-si
