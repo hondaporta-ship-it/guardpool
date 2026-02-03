@@ -6,42 +6,32 @@
     <title>ガードプール - ログイン</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="login-page">
+<body>
     <div class="login-container">
-        <div class="logo">
-            <svg width="80" height="80" viewBox="0 0 100 100">
-                <polygon points="30,20 50,60 20,80" fill="#ef4444"/>
-                <polygon points="50,20 80,80 20,80" fill="#1e3a8a"/>
-            </svg>
+        <div class="login-box">
+            <h1>🛡️ ガードプール</h1>
+            <p class="subtitle">警備員シェアリングシステム</p>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="loginId">会社ID</label>
+                    <input type="text" id="loginId" name="loginId" placeholder="例: ats" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">パスワード</label>
+                    <input type="password" id="password" name="password" placeholder="パスワードを入力" required>
+                </div>
+                
+                <button type="submit" class="btn-login">ログイン</button>
+                
+                <div id="errorMessage" class="error-message"></div>
+            </form>
         </div>
-        <h1>ガードプール</h1>
-        <p class="subtitle">警備員シェアリングシステム</p>
-        
-        <form id="loginForm">
-            <div class="form-group">
-                <label for="loginId">会社ID</label>
-                <input type="text" id="loginId" name="loginId" required placeholder="例: ats">
-            </div>
-            
-            <div class="form-group">
-                <label for="password">パスワード</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            
-            <button type="submit" class="btn-primary">ログイン</button>
-            
-            <div id="errorMessage" class="error-message"></div>
-        </form>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // Supabase設定
-        const SUPABASE_URL = 'https://lrfaifhmqtxycvytfcuv.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_XoFkG_ZulQQNSD5604cGbQ_6F13TB_k';
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
     <script src="app.js"></script>
-    
 </body>
 </html>
