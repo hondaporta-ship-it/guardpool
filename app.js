@@ -126,7 +126,6 @@ async function submitPost(currentUser) {
     const jobType = document.getElementById('jobType').value;
     const note = document.getElementById('note').value;
     
-    // 勤務時間帯のラベル
     const shiftLabels = {
         'day': '日勤',
         'night': '夜勤',
@@ -148,7 +147,6 @@ async function submitPost(currentUser) {
         created_at: new Date().toISOString()
     };
     
-    // テーブル名を決定
     const tableName = postType === 'available' ? 'posts_available' : 'posts_needed';
     
     try {
@@ -162,7 +160,6 @@ async function submitPost(currentUser) {
             return;
         }
         
-        // 成功メッセージ
         closeModal();
         
         const typeText = postType === 'available' ? '🔵 人が余ってます' : '🔴 人が足りません';
@@ -174,7 +171,6 @@ async function submitPost(currentUser) {
         `;
         document.getElementById('successMessage').classList.add('show');
         
-        // 投稿一覧を更新
         await loadPosts();
         
     } catch (error) {
@@ -188,6 +184,118 @@ async function loadPosts() {
     const postsList = document.getElementById('postsList');
     
     try {
-        // 「人が余ってます」を取得
         const { data: availablePosts, error: availableError } = await supabaseClient
             .from('posts_available')
+            .select('*')
+            .gte('post_date', new Date().toISOString().split('T')[0])
+            .order('post_date', { ascending: true });
+        
+        const { data: neededPosts, error: neededError } = await supabaseClient
+            .from('posts_needed')
+            .select('*')
+            .gte('post_date', new Date().toISOString().split('T')[0])
+            .order('post_date', { ascending: true });
+        
+        if (availableError || neededError) {
+            displayDummyData(postsList);
+            return;
+        }
+        
+        if ((!availablePosts || availablePosts.length === 0) && (!neededPosts || neededPosts.length === 0)) {
+            displayDummyData(postsList);
+            return;
+        }
+        
+        displayPosts(postsList, availablePosts || [], neededPosts || []);
+        
+    } catch (error) {
+        displayDummyData(postsList);
+    }
+}
+
+// 投稿を表示
+function displayPosts(container, availablePosts, neededPosts) {
+    let html = '';
+    const shiftIcons = { 'day': '☀️ 日勤', 'night': '🌙 夜勤', 'both': '🔄 どちらでも' };
+    
+    if (availablePosts.length > 0) {
+        html += '<h3 class="section-title available-title">🔵 人が余ってます</h3>';
+        availablePosts.forEach(post => { html += createPostCard(post, 'available', shiftIcons); });
+    }
+    
+    if (neededPosts.length > 0) {
+        html += '<h3 class="section-title needed-title">🔴 人が足りません</h3>';
+        neededPosts.forEach(post => { html += createPostCard(post, 'needed', shiftIcons); });
+    }
+    
+    container.innerHTML = html;
+}
+
+// 投稿カードを作成
+function createPostCard(post, type, shiftIcons) {
+    const date = new Date(post.post_date).toLocaleDateString('ja-JP', { month: 'long', day: 'numeric', weekday: 'short' });
+    const shiftLabel = shiftIcons[post.shift_type] || post.shift_type;
+    
+    return `
+        <div class="post-card ${type}">
+            <div class="post-header">
+                <div>
+                    <div class="company-name">${post.company_name}</div>
+                    <div class="post-date">${date}</div>
+                </div>
+                <div class="shift-badge ${post.shift_type}">${shiftLabel}</div>
+            </div>
+            <div class="post-details">
+                <div class="detail-item">
+                    <span class="detail-label">${type === 'available' ? '余剰人数' : '必要人数'}</span>
+                    <span class="detail-value">${post.people_count}名</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">エリア</span>
+                    <span class="detail-value">${post.area}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">業務内容</span>
+                    <span class="detail-value">${post.job_type}</span>
+                </div>
+            </div>
+            ${post.note ? `<div class="post-note">📝 ${post.note}</div>` : ''}
+            <div class="contact-info">
+                <div>📞 ${post.phone}</div>
+                <div>👤 ${post.contact_person} (${post.contact_phone})</div>
+            </div>
+        </div>
+    `;
+}
+
+// ダミーデータを表示
+function displayDummyData(container) {
+    const dummyData = {
+        available: [
+            { company_name: '全九州警備', post_date: getDateString(1), shift_type: 'day', people_count: 2, area: '福岡市中央区', job_type: '施設警備', note: '経験3年以上のベテラン2名', phone: '092-XXX-XXXX', contact_person: '田中', contact_phone: '090-XXXX-XXXX' },
+            { company_name: 'サンクス警備', post_date: getDateString(2), shift_type: 'night', people_count: 1, area: '福岡市博多区', job_type: '巡回警備', note: null, phone: '092-XXX-XXXX', contact_person: '佐藤', contact_phone: '090-XXXX-XXXX' },
+            { company_name: 'ATセキュリティ', post_date: getDateString(3), shift_type: 'both', people_count: 3, area: '北九州市', job_type: 'イベント警備', note: 'イベント経験豊富なスタッフ', phone: '092-XXX-XXXX', contact_person: '本田', contact_phone: '090-XXXX-XXXX' }
+        ],
+        needed: [
+            { company_name: '博多警備保障', post_date: getDateString(1), shift_type: 'day', people_count: 3, area: '福岡市博多区', job_type: '交通誘導', note: '急募！工事現場の増員', phone: '092-XXX-XXXX', contact_person: '山本', contact_phone: '090-XXXX-XXXX' },
+            { company_name: '九州セキュリティ', post_date: getDateString(2), shift_type: 'night', people_count: 2, area: '福岡市中央区', job_type: '施設警備', note: null, phone: '092-XXX-XXXX', contact_person: '中村', contact_phone: '090-XXXX-XXXX' }
+        ]
+    };
+    
+    const shiftIcons = { 'day': '☀️ 日勤', 'night': '🌙 夜勤', 'both': '🔄 どちらでも' };
+    let html = '<div class="demo-notice">📌 デモ用サンプルデータを表示中</div>';
+    
+    html += '<h3 class="section-title available-title">🔵 人が余ってます</h3>';
+    dummyData.available.forEach(post => { html += createPostCard(post, 'available', shiftIcons); });
+    
+    html += '<h3 class="section-title needed-title">🔴 人が足りません</h3>';
+    dummyData.needed.forEach(post => { html += createPostCard(post, 'needed', shiftIcons); });
+    
+    container.innerHTML = html;
+}
+
+function getDateString(daysFromNow) {
+    const date = new Date();
+    date.setDate(date.getDate() + daysFromNow);
+    return date.toISOString().split('T')[0];
+}
