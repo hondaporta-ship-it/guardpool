@@ -128,6 +128,27 @@ body.dashboard {
     gap: 1rem;
 }
 
+/* ========================================
+   権限バッジ: admin/member を視覚的に表示
+   ======================================== */
+.role-badge {
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.role-admin {
+    background: #fbbf24;
+    color: #92400e;
+}
+
+.role-member {
+    background: rgba(255,255,255,0.2);
+    color: white;
+}
+
 .btn-logout {
     background: rgba(255,255,255,0.2);
     color: white;
@@ -211,6 +232,10 @@ body.dashboard {
     color: #dc2626;
 }
 
+.own-posts-title {
+    color: #1e3a5f;
+}
+
 /* デモ通知 */
 .demo-notice {
     background: #fef3c7;
@@ -220,6 +245,124 @@ body.dashboard {
     margin-bottom: 1rem;
     font-size: 0.9rem;
     text-align: center;
+}
+
+/* ========================================
+   サマリーパネル: 余剰・不足の合計表示
+   admin/member両方に表示
+   ======================================== */
+.summary-panel {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.summary-title {
+    color: #1e3a5f;
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.summary-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.summary-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: #f8fafc;
+}
+
+.summary-available {
+    border: 2px solid #3b82f6;
+    background: #eff6ff;
+}
+
+.summary-needed {
+    border: 2px solid #ef4444;
+    background: #fef2f2;
+}
+
+.summary-icon {
+    font-size: 2rem;
+}
+
+.summary-info {
+    flex: 1;
+}
+
+.summary-label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 600;
+}
+
+.summary-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e3a5f;
+    line-height: 1.2;
+}
+
+.summary-unit {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-left: 0.2rem;
+}
+
+.summary-sub {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+/* ========================================
+   ATS問い合わせバナー（member向け）
+   ======================================== */
+.ats-contact-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    border: 2px solid #10b981;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.ats-contact-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.ats-contact-text {
+    flex: 1;
+}
+
+.ats-contact-text strong {
+    color: #065f46;
+    font-size: 1.05rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.ats-contact-text p {
+    color: #047857;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0.25rem;
+}
+
+.ats-contact-info {
+    font-weight: 700;
+    font-size: 1rem !important;
+    margin-top: 0.5rem !important;
 }
 
 /* 投稿カード */
@@ -238,6 +381,12 @@ body.dashboard {
 
 .post-card.needed {
     border-left-color: #ef4444;
+}
+
+/* 自社投稿のハイライト */
+.post-card.own-post {
+    background: #fffbeb;
+    border-left-width: 6px;
 }
 
 .post-header {
@@ -263,4 +412,289 @@ body.dashboard {
 .shift-badge {
     padding: 0.35rem 0.75rem;
     border-radius: 2rem;
-    font-si
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.shift-badge.day {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.shift-badge.night {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.shift-badge.both {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+/* 投稿詳細 */
+.post-details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.detail-item {
+    text-align: center;
+}
+
+.detail-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #999;
+    margin-bottom: 0.25rem;
+}
+
+.detail-value {
+    font-weight: 600;
+    color: #333;
+}
+
+.post-note {
+    background: #f8fafc;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0.75rem;
+}
+
+/* 連絡先情報（admin向け） */
+.contact-info {
+    background: #f1f5f9;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    color: #475569;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* 自社投稿ラベル（member向け） */
+.own-post-label {
+    background: #ecfdf5;
+    color: #065f46;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* 自社投稿なしメッセージ */
+.no-own-posts {
+    color: #666;
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.95rem;
+}
+
+/* モーダル */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #999;
+    padding: 0.25rem;
+}
+
+/* シフトオプション */
+.shift-options {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.shift-option {
+    flex: 1;
+    min-width: 100px;
+}
+
+.shift-option input {
+    display: none;
+}
+
+.shift-label {
+    display: block;
+    text-align: center;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.shift-option input:checked + .shift-label {
+    border-color: #3b82f6;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+/* フォームアクション */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-cancel {
+    flex: 1;
+    padding: 0.75rem;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+.btn-submit {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+}
+
+.btn-submit-available {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+}
+
+.btn-submit-needed {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+/* 成功メッセージ */
+.success-message {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1001;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+}
+
+.success-message.show {
+    display: flex;
+}
+
+.success-content {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+}
+
+.success-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.success-content h3 {
+    color: #065f46;
+    margin-bottom: 0.75rem;
+}
+
+.success-content p {
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.btn-close-success {
+    padding: 0.75rem 2rem;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 600px) {
+    .header {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+    
+    .action-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .summary-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .post-details {
+        grid-template-columns: 1fr;
+        text-align: left;
+    }
+    
+    .detail-item {
+        text-align: left;
+        display: flex;
+        justify-content: space-between;
+        padding: 0.25rem 0;
+    }
+    
+    .contact-info {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .ats-contact-banner {
+        flex-direction: column;
+    }
+}

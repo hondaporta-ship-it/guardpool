@@ -10,6 +10,7 @@
     <header class="header">
         <h1>🛡️ ガードプール</h1>
         <div class="user-info">
+            <span id="roleBadge" class="role-badge"></span>
             <span id="companyName">読み込み中...</span>
             <button class="btn-logout" onclick="logout()">ログアウト</button>
         </div>
@@ -127,4 +128,25 @@
                 </div>
                 
                 <div class="form-actions">
-                    <button type="button" class="btn-cancel" onclick="closeModal()">キャンセル</butto
+                    <button type="button" class="btn-cancel" onclick="closeModal()">キャンセル</button>
+                    <button type="submit" id="submitBtn" class="btn-submit">投稿する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 成功メッセージ -->
+    <div id="successMessage" class="success-message">
+        <div class="success-content">
+            <div class="success-icon">✅</div>
+            <h3>投稿が完了しました！</h3>
+            <p id="successDetail"></p>
+            <button class="btn-close-success" onclick="closeSuccessMessage()">閉じる</button>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
