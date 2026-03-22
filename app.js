@@ -19,6 +19,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             const loginId = document.getElementById('loginId').value;
             const password = document.getElementById('password').value;
             const errorMessage = document.getElementById('errorMessage');
+            const loginBtn = loginForm.querySelector('.btn-login');
+            
+            loginBtn.textContent = 'ログイン中...';
+            loginBtn.disabled = true;
             
             try {
                 const { data, error } = await supabaseClient
@@ -31,6 +35,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 if (error || !data) {
                     errorMessage.textContent = 'ログインIDまたはパスワードが間違っています';
                     errorMessage.classList.add('show');
+                    loginBtn.textContent = 'ログイン';
+                    loginBtn.disabled = false;
                     return;
                 }
                 
@@ -41,6 +47,8 @@ document.addEventListener('DOMContentLoaded', async () => {
                 console.error('ログインエラー:', error);
                 errorMessage.textContent = 'ログインに失敗しました';
                 errorMessage.classList.add('show');
+                loginBtn.textContent = 'ログイン';
+                loginBtn.disabled = false;
             }
         });
     }
@@ -76,6 +84,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('postDate').value = todayStr;
         document.getElementById('postDate').min = todayStr;
         
+        // フィルター初期設定
+        initFilters();
+        
         // 投稿一覧を読み込み
         await loadPosts();
         
@@ -90,21 +101,48 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // ========================================
 // ユーザーのroleを判定する関数
-// companiesテーブルのroleカラムを使用
-// roleカラムが未設定の場合はlogin_idで判定（フォールバック）
 // ========================================
 function getUserRole(user) {
-    // roleカラムがある場合はそれを使用
-    if (user.role) {
-        return user.role;
-    }
-    // フォールバック: ATSのlogin_idなら管理者
-    // （companiesテーブルにroleカラムが追加されるまでの暫定対応）
+    if (user.role) return user.role;
     const adminLoginIds = ['ats', 'ats_mori', 'ats_kashiko'];
-    if (adminLoginIds.includes(user.login_id)) {
-        return 'admin';
-    }
+    if (adminLoginIds.includes(user.login_id)) return 'admin';
     return 'member';
+}
+
+// ========================================
+// フィルター機能
+// ========================================
+function initFilters() {
+    const filterDate = document.getElementById('filterDate');
+    const filterArea = document.getElementById('filterArea');
+    const filterType = document.getElementById('filterType');
+    const filterClear = document.getElementById('filterClear');
+    
+    if (filterDate) {
+        filterDate.addEventListener('change', () => loadPosts());
+    }
+    if (filterArea) {
+        filterArea.addEventListener('change', () => loadPosts());
+    }
+    if (filterType) {
+        filterType.addEventListener('change', () => loadPosts());
+    }
+    if (filterClear) {
+        filterClear.addEventListener('click', () => {
+            if (filterDate) filterDate.value = '';
+            if (filterArea) filterArea.value = '';
+            if (filterType) filterType.value = '';
+            loadPosts();
+        });
+    }
+}
+
+function getFilters() {
+    return {
+        date: document.getElementById('filterDate')?.value || '',
+        area: document.getElementById('filterArea')?.value || '',
+        type: document.getElementById('filterType')?.value || ''
+    };
 }
 
 // 投稿フォームを表示
@@ -139,7 +177,6 @@ window.closeModal = () => {
     document.body.style.overflow = '';
     document.getElementById('postForm').reset();
     
-    // 今日の日付を再設定
     const today = new Date().toISOString().split('T')[0];
     document.getElementById('postDate').value = today;
 };
@@ -159,11 +196,11 @@ async function submitPost(currentUser) {
     const jobType = document.getElementById('jobType').value;
     const note = document.getElementById('note').value;
     
-    const shiftLabels = {
-        'day': '日勤',
-        'night': '夜勤',
-        'both': 'どちらでも'
-    };
+    const shiftLabels = { 'day': '日勤', 'night': '夜勤', 'both': 'どちらでも' };
+    
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.textContent = '送信中...';
+    submitBtn.disabled = true;
     
     const postData = {
         company_id: currentUser.id,
@@ -190,6 +227,8 @@ async function submitPost(currentUser) {
         if (error) {
             console.error('投稿エラー:', error);
             alert('投稿に失敗しました。もう一度お試しください。');
+            submitBtn.textContent = '投稿する';
+            submitBtn.disabled = false;
             return;
         }
         
@@ -204,46 +243,117 @@ async function submitPost(currentUser) {
         `;
         document.getElementById('successMessage').classList.add('show');
         
+        submitBtn.textContent = '投稿する';
+        submitBtn.disabled = false;
+        
         await loadPosts();
         
     } catch (error) {
         console.error('投稿エラー:', error);
         alert('投稿に失敗しました。');
+        submitBtn.textContent = '投稿する';
+        submitBtn.disabled = false;
     }
 }
 
 // ========================================
-// 投稿一覧を読み込み（roleベースの表示制御）
+// 投稿削除機能
+// ========================================
+window.deletePost = async (postId, tableName) => {
+    if (!confirm('この投稿を削除しますか？')) return;
+    
+    try {
+        const { error } = await supabaseClient
+            .from(tableName)
+            .delete()
+            .eq('id', postId);
+        
+        if (error) {
+            console.error('削除エラー:', error);
+            alert('削除に失敗しました。');
+            return;
+        }
+        
+        // 削除成功のフィードバック
+        const card = document.querySelector(`[data-post-id="${postId}"]`);
+        if (card) {
+            card.style.transition = 'opacity 0.3s, transform 0.3s';
+            card.style.opacity = '0';
+            card.style.transform = 'translateX(-20px)';
+            setTimeout(() => loadPosts(), 300);
+        } else {
+            await loadPosts();
+        }
+        
+    } catch (error) {
+        console.error('削除エラー:', error);
+        alert('削除に失敗しました。');
+    }
+};
+
+// ========================================
+// 投稿一覧を読み込み（roleベースの表示制御 + フィルター）
 // ========================================
 async function loadPosts() {
     const postsList = document.getElementById('postsList');
     const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
     const role = getUserRole(currentUser);
+    const filters = getFilters();
+    
+    // ローディング表示
+    postsList.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>';
     
     try {
-        const { data: availablePosts, error: availableError } = await supabaseClient
+        let availableQuery = supabaseClient
             .from('posts_available')
             .select('*')
             .gte('post_date', new Date().toISOString().split('T')[0])
             .order('post_date', { ascending: true });
         
-        const { data: neededPosts, error: neededError } = await supabaseClient
+        let neededQuery = supabaseClient
             .from('posts_needed')
             .select('*')
             .gte('post_date', new Date().toISOString().split('T')[0])
             .order('post_date', { ascending: true });
+        
+        // フィルター適用
+        if (filters.date) {
+            availableQuery = availableQuery.eq('post_date', filters.date);
+            neededQuery = neededQuery.eq('post_date', filters.date);
+        }
+        if (filters.area) {
+            availableQuery = availableQuery.eq('area', filters.area);
+            neededQuery = neededQuery.eq('area', filters.area);
+        }
+        
+        const { data: availablePosts, error: availableError } = await availableQuery;
+        const { data: neededPosts, error: neededError } = await neededQuery;
         
         if (availableError || neededError) {
             displayDummyData(postsList, role, currentUser);
             return;
         }
         
-        if ((!availablePosts || availablePosts.length === 0) && (!neededPosts || neededPosts.length === 0)) {
-            displayDummyData(postsList, role, currentUser);
+        let filteredAvailable = availablePosts || [];
+        let filteredNeeded = neededPosts || [];
+        
+        // タイプフィルター
+        if (filters.type === 'available') {
+            filteredNeeded = [];
+        } else if (filters.type === 'needed') {
+            filteredAvailable = [];
+        }
+        
+        if (filteredAvailable.length === 0 && filteredNeeded.length === 0) {
+            if (filters.date || filters.area || filters.type) {
+                postsList.innerHTML = '<div class="no-results"><p>🔍 条件に一致する投稿がありません</p><p class="no-results-sub">フィルターを変更してお試しください</p></div>';
+            } else {
+                displayDummyData(postsList, role, currentUser);
+            }
             return;
         }
         
-        displayPosts(postsList, availablePosts || [], neededPosts || [], role, currentUser);
+        displayPosts(postsList, filteredAvailable, filteredNeeded, role, currentUser);
         
     } catch (error) {
         displayDummyData(postsList, role, currentUser);
@@ -252,22 +362,16 @@ async function loadPosts() {
 
 // ========================================
 // 投稿を表示（roleベースの分岐）
-// admin: 全投稿の個別カード表示（会社名・連絡先含む）
-// member: 合計サマリー + 自社投稿の個別表示
 // ========================================
 function displayPosts(container, availablePosts, neededPosts, role, currentUser) {
     const shiftIcons = { 'day': '☀️ 日勤', 'night': '🌙 夜勤', 'both': '🔄 どちらでも' };
     
     if (role === 'admin') {
-        // ======== 管理者表示: サマリー + 全投稿の詳細 ========
         let html = '';
-        
-        // サマリーパネル（管理者にも合計を表示）
         const totalAvailable = availablePosts.reduce((sum, p) => sum + p.people_count, 0);
         const totalNeeded = neededPosts.reduce((sum, p) => sum + p.people_count, 0);
         html += createSummaryPanel(totalAvailable, totalNeeded, availablePosts.length, neededPosts.length);
         
-        // 個別投稿カード（全情報表示）
         if (availablePosts.length > 0) {
             html += '<h3 class="section-title available-title">🔵 人が余ってます</h3>';
             availablePosts.forEach(post => { html += createPostCard(post, 'available', shiftIcons, role, currentUser); });
@@ -280,18 +384,12 @@ function displayPosts(container, availablePosts, neededPosts, role, currentUser)
         
         container.innerHTML = html;
     } else {
-        // ======== 一般ユーザー表示: サマリー + 自社投稿のみ ========
         let html = '';
-        
-        // 合計サマリー（どの会社かは見えない）
         const totalAvailable = availablePosts.reduce((sum, p) => sum + p.people_count, 0);
         const totalNeeded = neededPosts.reduce((sum, p) => sum + p.people_count, 0);
         html += createSummaryPanel(totalAvailable, totalNeeded, availablePosts.length, neededPosts.length);
-        
-        // ATS問い合わせ案内
         html += createContactATSBanner();
         
-        // 自社の投稿のみ個別表示
         const myAvailable = availablePosts.filter(p => p.company_id === currentUser.id);
         const myNeeded = neededPosts.filter(p => p.company_id === currentUser.id);
         
@@ -306,13 +404,16 @@ function displayPosts(container, availablePosts, neededPosts, role, currentUser)
 }
 
 // ========================================
-// サマリーパネルを生成
-// 余剰・不足の合計人数を表示
+// サマリーパネル
 // ========================================
 function createSummaryPanel(totalAvailable, totalNeeded, availableCount, neededCount) {
+    const matchStatus = totalAvailable > 0 && totalNeeded > 0
+        ? '<div class="match-hint">💡 マッチングの可能性があります</div>'
+        : '';
+    
     return `
         <div class="summary-panel">
-            <h3 class="summary-title">📊 本日のサマリー</h3>
+            <h3 class="summary-title">📊 サマリー</h3>
             <div class="summary-cards">
                 <div class="summary-card summary-available">
                     <div class="summary-icon">🔵</div>
@@ -331,13 +432,13 @@ function createSummaryPanel(totalAvailable, totalNeeded, availableCount, neededC
                     </div>
                 </div>
             </div>
+            ${matchStatus}
         </div>
     `;
 }
 
 // ========================================
 // ATS問い合わせバナー（member向け）
-// 直接やり取りさせず、すべてATS経由
 // ========================================
 function createContactATSBanner() {
     return `
@@ -353,41 +454,48 @@ function createContactATSBanner() {
 }
 
 // ========================================
-// 投稿カードを作成（roleに応じて表示内容を変更）
-// admin: 会社名・連絡先を含む全情報
-// member: 自社投稿のみ表示（連絡先は自社のもののみ）
+// 投稿カード（削除ボタン付き）
 // ========================================
 function createPostCard(post, type, shiftIcons, role, currentUser) {
     const date = new Date(post.post_date).toLocaleDateString('ja-JP', { month: 'long', day: 'numeric', weekday: 'short' });
     const shiftLabel = shiftIcons[post.shift_type] || post.shift_type;
     const isOwnPost = currentUser && post.company_id === currentUser.id;
+    const isAdmin = role === 'admin';
     
-    // 会社名: adminは全表示、memberは自社のみ表示
-    const companyDisplay = (role === 'admin' || isOwnPost) ? post.company_name : '';
+    const companyDisplay = (isAdmin || isOwnPost) ? post.company_name : '';
     
-    // 連絡先: adminは全表示、memberには非表示（自社投稿でも連絡先は自分のなので不要）
     let contactHtml = '';
-    if (role === 'admin') {
-        // 管理者: 全連絡先表示
+    if (isAdmin) {
         contactHtml = `
             <div class="contact-info">
-                <div>📞 ${post.phone}</div>
-                <div>👤 ${post.contact_person} (${post.contact_phone})</div>
+                <div>📞 ${post.phone || '—'}</div>
+                <div>👤 ${post.contact_person || '—'} ${post.contact_phone ? '(' + post.contact_phone + ')' : ''}</div>
             </div>
         `;
     } else if (isOwnPost) {
-        // 一般ユーザーの自社投稿: 連絡先は省略（自分の情報なので）
         contactHtml = '<div class="own-post-label">✅ 自社の投稿</div>';
     }
     
+    // 削除ボタン（自社投稿 or admin）
+    const tableName = type === 'available' ? 'posts_available' : 'posts_needed';
+    const deleteBtn = (isOwnPost || isAdmin)
+        ? `<button class="btn-delete" onclick="deletePost('${post.id}', '${tableName}')" title="削除">🗑️</button>`
+        : '';
+    
+    // 投稿からの経過時間
+    const createdAt = post.created_at ? getTimeAgo(new Date(post.created_at)) : '';
+    
     return `
-        <div class="post-card ${type}${isOwnPost ? ' own-post' : ''}">
+        <div class="post-card ${type}${isOwnPost ? ' own-post' : ''}" data-post-id="${post.id}">
             <div class="post-header">
                 <div>
                     ${companyDisplay ? `<div class="company-name">${companyDisplay}</div>` : ''}
-                    <div class="post-date">${date}</div>
+                    <div class="post-date">${date}${createdAt ? ` <span class="time-ago">（${createdAt}）</span>` : ''}</div>
                 </div>
-                <div class="shift-badge ${post.shift_type}">${shiftLabel}</div>
+                <div class="post-header-right">
+                    <div class="shift-badge ${post.shift_type}">${shiftLabel}</div>
+                    ${deleteBtn}
+                </div>
             </div>
             <div class="post-details">
                 <div class="detail-item">
@@ -409,20 +517,34 @@ function createPostCard(post, type, shiftIcons, role, currentUser) {
     `;
 }
 
+// 経過時間表示
+function getTimeAgo(date) {
+    const now = new Date();
+    const diff = now - date;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    
+    if (minutes < 1) return 'たった今';
+    if (minutes < 60) return `${minutes}分前`;
+    if (hours < 24) return `${hours}時間前`;
+    if (days < 7) return `${days}日前`;
+    return '';
+}
+
 // ========================================
-// ダミーデータを表示（テーブル未作成時のフォールバック）
-// roleベースの表示制御にも対応
+// ダミーデータ表示
 // ========================================
 function displayDummyData(container, role, currentUser) {
     const dummyData = {
         available: [
-            { company_id: 'dummy_1', company_name: '全九州警備', post_date: getDateString(1), shift_type: 'day', people_count: 2, area: '福岡市中央区', job_type: '施設警備', note: '経験3年以上のベテラン2名', phone: '092-XXX-XXXX', contact_person: '田中', contact_phone: '090-XXXX-XXXX' },
-            { company_id: 'dummy_2', company_name: 'サンクス警備', post_date: getDateString(2), shift_type: 'night', people_count: 1, area: '福岡市博多区', job_type: '巡回警備', note: null, phone: '092-XXX-XXXX', contact_person: '佐藤', contact_phone: '090-XXXX-XXXX' },
-            { company_id: 'dummy_3', company_name: 'ATセキュリティ', post_date: getDateString(3), shift_type: 'both', people_count: 3, area: '北九州市', job_type: 'イベント警備', note: 'イベント経験豊富なスタッフ', phone: '092-XXX-XXXX', contact_person: '本田', contact_phone: '090-XXXX-XXXX' }
+            { id: 'd1', company_id: 'dummy_1', company_name: '全九州警備', post_date: getDateString(1), shift_type: 'day', people_count: 2, area: '福岡市中央区', job_type: '施設警備', note: '経験3年以上のベテラン2名', phone: '092-XXX-XXXX', contact_person: '田中', contact_phone: '090-XXXX-XXXX', created_at: new Date(Date.now() - 3600000).toISOString() },
+            { id: 'd2', company_id: 'dummy_2', company_name: 'サンクス警備', post_date: getDateString(2), shift_type: 'night', people_count: 1, area: '福岡市博多区', job_type: '巡回警備', note: null, phone: '092-XXX-XXXX', contact_person: '佐藤', contact_phone: '090-XXXX-XXXX', created_at: new Date(Date.now() - 7200000).toISOString() },
+            { id: 'd3', company_id: 'dummy_3', company_name: 'ATセキュリティ', post_date: getDateString(3), shift_type: 'both', people_count: 3, area: '北九州市', job_type: 'イベント警備', note: 'イベント経験豊富なスタッフ', phone: '092-441-6900', contact_person: '本田', contact_phone: '080-0000-0000', created_at: new Date(Date.now() - 10800000).toISOString() }
         ],
         needed: [
-            { company_id: 'dummy_4', company_name: '博多警備保障', post_date: getDateString(1), shift_type: 'day', people_count: 3, area: '福岡市博多区', job_type: '交通誘導', note: '急募！工事現場の増員', phone: '092-XXX-XXXX', contact_person: '山本', contact_phone: '090-XXXX-XXXX' },
-            { company_id: 'dummy_5', company_name: '九州セキュリティ', post_date: getDateString(2), shift_type: 'night', people_count: 2, area: '福岡市中央区', job_type: '施設警備', note: null, phone: '092-XXX-XXXX', contact_person: '中村', contact_phone: '090-XXXX-XXXX' }
+            { id: 'd4', company_id: 'dummy_4', company_name: '博多警備保障', post_date: getDateString(1), shift_type: 'day', people_count: 3, area: '福岡市博多区', job_type: '交通誘導', note: '急募！工事現場の増員', phone: '092-XXX-XXXX', contact_person: '山本', contact_phone: '090-XXXX-XXXX', created_at: new Date(Date.now() - 1800000).toISOString() },
+            { id: 'd5', company_id: 'dummy_5', company_name: '九州セキュリティ', post_date: getDateString(2), shift_type: 'night', people_count: 2, area: '福岡市中央区', job_type: '施設警備', note: null, phone: '092-XXX-XXXX', contact_person: '中村', contact_phone: '090-XXXX-XXXX', created_at: new Date(Date.now() - 5400000).toISOString() }
         ]
     };
     
@@ -430,7 +552,6 @@ function displayDummyData(container, role, currentUser) {
     let html = '<div class="demo-notice">📌 デモ用サンプルデータを表示中</div>';
     
     if (role === 'admin') {
-        // 管理者: サマリー + 全投稿の個別表示
         const totalAvailable = dummyData.available.reduce((sum, p) => sum + p.people_count, 0);
         const totalNeeded = dummyData.needed.reduce((sum, p) => sum + p.people_count, 0);
         html += createSummaryPanel(totalAvailable, totalNeeded, dummyData.available.length, dummyData.needed.length);
@@ -441,7 +562,6 @@ function displayDummyData(container, role, currentUser) {
         html += '<h3 class="section-title needed-title">🔴 人が足りません</h3>';
         dummyData.needed.forEach(post => { html += createPostCard(post, 'needed', shiftIcons, role, currentUser); });
     } else {
-        // 一般ユーザー: サマリーのみ（ダミーデータなので自社投稿なし）
         const totalAvailable = dummyData.available.reduce((sum, p) => sum + p.people_count, 0);
         const totalNeeded = dummyData.needed.reduce((sum, p) => sum + p.people_count, 0);
         html += createSummaryPanel(totalAvailable, totalNeeded, dummyData.available.length, dummyData.needed.length);

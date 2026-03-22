@@ -2,9 +2,15 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>ガードプール - ログイン</title>
+    <meta name="description" content="ガードプール - 警備員シェアリングシステム。警備会社間の人員余剰・不足をマッチング。">
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e3a5f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ガードプール">
 </head>
 <body>
     <div class="login-container">
@@ -15,18 +21,23 @@
             <form id="loginForm">
                 <div class="form-group">
                     <label for="loginId">会社ID</label>
-                    <input type="text" id="loginId" name="loginId" placeholder="例: ats" required>
+                    <input type="text" id="loginId" name="loginId" placeholder="例: ats" required autocomplete="username">
                 </div>
                 
                 <div class="form-group">
                     <label for="password">パスワード</label>
-                    <input type="password" id="password" name="password" placeholder="パスワードを入力" required>
+                    <input type="password" id="password" name="password" placeholder="パスワードを入力" required autocomplete="current-password">
                 </div>
                 
                 <button type="submit" class="btn-login">ログイン</button>
                 
                 <div id="errorMessage" class="error-message"></div>
             </form>
+            
+            <div class="login-footer">
+                <p>ATセキュリティが運営する警備会社間の人員シェアリングサービスです。</p>
+                <p>アカウントについてのお問い合わせ: <a href="tel:092-441-6900">092-441-6900</a></p>
+            </div>
         </div>
     </div>
     
