@@ -72,6 +72,12 @@ document.addEventListener('DOMContentLoaded', async () => {
             roleBadge.className = 'role-badge ' + (isAdmin ? 'role-admin' : 'role-member');
         }
         
+        // 管理者リンク表示
+        if (getUserRole(currentUser) === 'admin') {
+            const adminLink = document.getElementById('adminLink');
+            if (adminLink) adminLink.style.display = 'inline-block';
+        }
+
         // ログアウト
         window.logout = () => {
             sessionStorage.removeItem('currentUser');

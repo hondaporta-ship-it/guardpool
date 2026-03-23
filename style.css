@@ -149,6 +149,22 @@ body.dashboard {
     color: white;
 }
 
+.btn-admin-link {
+    color: #fbbf24;
+    text-decoration: none;
+    background: rgba(251,191,36,0.15);
+    border: 1px solid rgba(251,191,36,0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.btn-admin-link:hover {
+    background: rgba(251,191,36,0.3);
+}
+
 .btn-logout {
     background: rgba(255,255,255,0.2);
     color: white;
@@ -840,6 +856,548 @@ body.dashboard {
 }
 
 /* レスポンシブ対応 */
+/* ========================================
+   管理者ページ
+   ======================================== */
+
+.admin-header .header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.admin-label {
+    background: #fbbf24;
+    color: #92400e;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+.btn-back-dash {
+    color: white;
+    text-decoration: none;
+    background: rgba(255,255,255,0.15);
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.4rem;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+
+.btn-back-dash:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+/* タブナビゲーション */
+.admin-tabs {
+    display: flex;
+    background: white;
+    border-bottom: 2px solid #e2e8f0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.admin-tab {
+    flex: 1;
+    min-width: 100px;
+    padding: 0.9rem 0.5rem;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.admin-tab:hover {
+    background: #f8fafc;
+    color: #1e3a5f;
+}
+
+.admin-tab.active {
+    color: #1e3a5f;
+    border-bottom-color: #3b82f6;
+    background: #eff6ff;
+}
+
+/* 管理者コンテナ */
+.admin-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1.5rem;
+}
+
+.admin-section {
+    display: none;
+}
+
+.admin-section.active {
+    display: block;
+}
+
+/* 統計カード */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border-left: 4px solid;
+}
+
+.stat-blue { border-left-color: #3b82f6; }
+.stat-green { border-left-color: #10b981; }
+.stat-red { border-left-color: #ef4444; }
+.stat-purple { border-left-color: #8b5cf6; }
+
+.stat-icon {
+    font-size: 2rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #1e3a5f;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 0.25rem;
+}
+
+/* 管理者カード */
+.admin-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.admin-card h3 {
+    color: #1e3a5f;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+/* セクションヘッダー */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.section-header h2 {
+    color: #1e3a5f;
+    font-size: 1.3rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+}
+
+/* テーブル */
+.table-search {
+    margin-bottom: 1rem;
+}
+
+.table-search input {
+    width: 100%;
+    padding: 0.6rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.table-search input:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.admin-table th {
+    background: #f8fafc;
+    color: #475569;
+    font-weight: 600;
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 2px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.admin-table td {
+    padding: 0.75rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+.admin-table tr:hover {
+    background: #f8fafc;
+}
+
+.td-bold {
+    font-weight: 600;
+    color: #1e3a5f;
+}
+
+.td-actions {
+    display: flex;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+.table-loading {
+    text-align: center;
+    color: #999;
+    padding: 2rem !important;
+}
+
+.btn-sm {
+    background: none;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    padding: 0.3rem 0.5rem;
+    border-radius: 0.3rem;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.btn-sm:hover {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+}
+
+.role-badge.role-member-table {
+    background: #e2e8f0;
+    color: #475569;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+/* 投稿フィルターバー（管理者） */
+.post-filter-bar {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.post-filter-bar select,
+.post-filter-bar input {
+    padding: 0.5rem 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.admin-posts-list {
+    /* 投稿カードを再利用 */
+}
+
+.type-label {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.3rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-right: 0.5rem;
+    vertical-align: middle;
+}
+
+.type-label.available {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.type-label.needed {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.post-meta {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+/* マッチングカード */
+.matching-description {
+    color: #666;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.match-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.match-date {
+    font-weight: 700;
+    color: #1e3a5f;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.match-pair {
+    display: flex;
+    align-items: stretch;
+    gap: 0.75rem;
+}
+
+.match-side {
+    flex: 1;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.match-avail {
+    background: #eff6ff;
+    border: 1px solid #93c5fd;
+}
+
+.match-need {
+    background: #fef2f2;
+    border: 1px solid #fca5a5;
+}
+
+.match-arrow {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    color: #999;
+    font-weight: 700;
+}
+
+.match-type {
+    font-size: 0.8rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+.match-company {
+    font-weight: 700;
+    color: #1e3a5f;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.match-detail {
+    font-size: 0.85rem;
+    color: #555;
+}
+
+.match-contact {
+    font-size: 0.8rem;
+    color: #888;
+    margin-top: 0.5rem;
+}
+
+/* お知らせカード */
+.announcement-card {
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid;
+}
+
+.priority-normal {
+    background: #f8fafc;
+    border-left-color: #3b82f6;
+}
+
+.priority-important {
+    background: #fffbeb;
+    border-left-color: #f59e0b;
+}
+
+.priority-urgent {
+    background: #fef2f2;
+    border-left-color: #ef4444;
+}
+
+.announcement-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+
+.announcement-priority {
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.announcement-date {
+    font-size: 0.8rem;
+    color: #999;
+    margin-left: auto;
+}
+
+.announcement-title {
+    color: #1e3a5f;
+    margin-bottom: 0.5rem;
+}
+
+.announcement-body {
+    color: #555;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 0.5rem;
+}
+
+.announcement-author {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+/* チャート */
+.chart-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.chart-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.chart-label {
+    width: 3rem;
+    font-size: 0.8rem;
+    color: #666;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.chart-bars {
+    flex: 1;
+    display: flex;
+    gap: 0.25rem;
+}
+
+.chart-bar {
+    height: 1.5rem;
+    border-radius: 0.25rem;
+    min-width: 0;
+    font-size: 0.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    transition: width 0.3s;
+}
+
+.bar-blue {
+    background: #3b82f6;
+}
+
+.bar-red {
+    background: #ef4444;
+}
+
+.chart-legend {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+/* エリア統計 */
+.area-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.area-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    background: #f8fafc;
+    border-radius: 0.4rem;
+}
+
+.area-name {
+    font-weight: 600;
+    color: #1e3a5f;
+    font-size: 0.9rem;
+}
+
+.area-counts {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.85rem;
+}
+
+.area-avail {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.area-need {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+/* ========================================
+   レスポンシブ (管理者)
+   ======================================== */
+@media (max-width: 900px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 @media (max-width: 600px) {
     .header {
         flex-direction: column;
@@ -888,5 +1446,38 @@ body.dashboard {
     .filter-clear {
         width: 100%;
         text-align: center;
+    }
+
+    /* 管理者モバイル */
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .admin-tabs {
+        gap: 0;
+    }
+
+    .admin-tab {
+        min-width: 70px;
+        font-size: 0.75rem;
+        padding: 0.7rem 0.3rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .post-filter-bar {
+        flex-direction: column;
+    }
+
+    .match-pair {
+        flex-direction: column;
+    }
+
+    .match-arrow {
+        justify-content: center;
+        transform: rotate(90deg);
     }
 }

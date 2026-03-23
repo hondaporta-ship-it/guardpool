@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>ガードプール - 管理者パネル</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e3a5f">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="ガードプール">
+</head>
+<body class="dashboard admin-page">
+    <header class="header admin-header">
+        <div class="header-left">
+            <h1>🛡️ ガードプール <span class="admin-label">管理者</span></h1>
+        </div>
+        <div class="user-info">
+            <span class="role-badge role-admin">管理者</span>
+            <span id="companyName">読み込み中...</span>
+            <a href="dashboard.html" class="btn-back-dash">← ダッシュボード</a>
+            <button class="btn-logout" onclick="logout()">ログアウト</button>
+        </div>
+    </header>
+
+    <!-- タブナビゲーション -->
+    <nav class="admin-tabs">
+        <button class="admin-tab active" data-tab="dashboard" onclick="switchTab('dashboard')">
+            📊 ダッシュボード
+        </button>
+        <button class="admin-tab" data-tab="companies" onclick="switchTab('companies')">
+            🏢 企業管理
+        </button>
+        <button class="admin-tab" data-tab="posts" onclick="switchTab('posts')">
+            📋 投稿管理
+        </button>
+        <button class="admin-tab" data-tab="matching" onclick="switchTab('matching')">
+            🔗 マッチング
+        </button>
+        <button class="admin-tab" data-tab="announcements" onclick="switchTab('announcements')">
+            📢 お知らせ
+        </button>
+    </nav>
+
+    <div class="admin-container">
+
+        <!-- ===== ダッシュボード ===== -->
+        <section id="tab-dashboard" class="admin-section active">
+            <div class="stats-grid">
+                <div class="stat-card stat-blue">
+                    <div class="stat-icon">🏢</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statCompanies">-</div>
+                        <div class="stat-label">登録企業数</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-green">
+                    <div class="stat-icon">🔵</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statAvailable">-</div>
+                        <div class="stat-label">余剰投稿</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-red">
+                    <div class="stat-icon">🔴</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statNeeded">-</div>
+                        <div class="stat-label">不足投稿</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-purple">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-info">
+                        <div class="stat-value" id="statActiveUsers">-</div>
+                        <div class="stat-label">アクティブ企業</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 投稿統計グラフ（テキストベース） -->
+            <div class="admin-card">
+                <h3>📈 直近7日間の投稿推移</h3>
+                <div id="weeklyChart" class="weekly-chart"></div>
+            </div>
+
+            <!-- エリア別統計 -->
+            <div class="admin-card">
+                <h3>📍 エリア別投稿数</h3>
+                <div id="areaStats" class="area-stats"></div>
+            </div>
+        </section>
+
+        <!-- ===== 企業管理 ===== -->
+        <section id="tab-companies" class="admin-section">
+            <div class="section-header">
+                <h2>🏢 企業管理</h2>
+                <button class="btn-primary" onclick="showAddCompanyModal()">+ 新規企業登録</button>
+            </div>
+            <div class="admin-card">
+                <div class="table-search">
+                    <input type="text" id="companySearch" placeholder="🔍 企業名で検索..." oninput="filterCompanies()">
+                </div>
+                <div class="table-responsive">
+                    <table class="admin-table" id="companiesTable">
+                        <thead>
+                            <tr>
+                                <th>企業名</th>
+                                <th>ログインID</th>
+                                <th>権限</th>
+                                <th>連絡先</th>
+                                <th>担当者</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="companiesBody">
+                            <tr><td colspan="6" class="table-loading">読み込み中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== 投稿管理 ===== -->
+        <section id="tab-posts" class="admin-section">
+            <div class="section-header">
+                <h2>📋 投稿管理</h2>
+                <div class="post-filter-bar">
+                    <select id="adminPostType" onchange="loadAdminPosts()">
+                        <option value="all">すべて</option>
+                        <option value="available">余剰のみ</option>
+                        <option value="needed">不足のみ</option>
+                    </select>
+                    <input type="date" id="adminPostDate" onchange="loadAdminPosts()">
+                </div>
+            </div>
+            <div id="adminPostsList" class="admin-posts-list">
+                <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
+            </div>
+        </section>
+
+        <!-- ===== マッチング履歴 ===== -->
+        <section id="tab-matching" class="admin-section">
+            <div class="section-header">
+                <h2>🔗 マッチング状況</h2>
+            </div>
+            <div class="admin-card">
+                <p class="matching-description">同日・同エリアの余剰↔不足投稿を自動検出して表示します。</p>
+                <div id="matchingList">
+                    <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== お知らせ ===== -->
+        <section id="tab-announcements" class="admin-section">
+            <div class="section-header">
+                <h2>📢 お知らせ投稿</h2>
+                <button class="btn-primary" onclick="showAnnouncementModal()">+ 新規お知らせ</button>
+            </div>
+            <div id="announcementsList" class="admin-card">
+                <div class="loading-spinner"><div class="spinner"></div><p>読み込み中...</p></div>
+            </div>
+        </section>
+    </div>
+
+    <!-- 企業登録モーダル -->
+    <div id="companyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="companyModalTitle">新規企業登録</h2>
+                <button class="modal-close" onclick="closeCompanyModal()">&times;</button>
+            </div>
+            <form id="companyForm" onsubmit="submitCompany(event)">
+                <input type="hidden" id="editCompanyId">
+                <div class="form-group">
+                    <label for="companyFormName">企業名 *</label>
+                    <input type="text" id="companyFormName" required placeholder="例: ○○警備保障">
+                </div>
+                <div class="form-group">
+                    <label for="companyFormLoginId">ログインID *</label>
+                    <input type="text" id="companyFormLoginId" required placeholder="例: company01">
+                </div>
+                <div class="form-group">
+                    <label for="companyFormPassword">パスワード *</label>
+                    <input type="text" id="companyFormPassword" required placeholder="初期パスワード">
+                </div>
+                <div class="form-group">
+                    <label for="companyFormRole">権限 *</label>
+                    <select id="companyFormRole" required>
+                        <option value="member">一般（member）</option>
+                        <option value="admin">管理者（admin）</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="companyFormPhone">電話番号</label>
+                    <input type="tel" id="companyFormPhone" placeholder="092-XXX-XXXX">
+                </div>
+                <div class="form-group">
+                    <label for="companyFormContact">担当者名</label>
+                    <input type="text" id="companyFormContact" placeholder="山田 太郎">
+                </div>
+                <div class="form-group">
+                    <label for="companyFormContactPhone">担当者電話</label>
+                    <input type="tel" id="companyFormContactPhone" placeholder="090-XXXX-XXXX">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeCompanyModal()">キャンセル</button>
+                    <button type="submit" class="btn-submit btn-submit-available" id="companySubmitBtn">登録する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- お知らせ投稿モーダル -->
+    <div id="announcementModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📢 お知らせ投稿</h2>
+                <button class="modal-close" onclick="closeAnnouncementModal()">&times;</button>
+            </div>
+            <form id="announcementForm" onsubmit="submitAnnouncement(event)">
+                <div class="form-group">
+                    <label for="announcementTitle">タイトル *</label>
+                    <input type="text" id="announcementTitle" required placeholder="お知らせのタイトル">
+                </div>
+                <div class="form-group">
+                    <label for="announcementBody">本文 *</label>
+                    <textarea id="announcementBody" rows="5" required placeholder="お知らせの内容を入力してください"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="announcementPriority">重要度</label>
+                    <select id="announcementPriority">
+                        <option value="normal">通常</option>
+                        <option value="important">重要</option>
+                        <option value="urgent">緊急</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeAnnouncementModal()">キャンセル</button>
+                    <button type="submit" class="btn-submit btn-submit-available">投稿する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- パスワードリセットモーダル -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content" style="max-width:400px">
+            <div class="modal-header">
+                <h2>🔑 パスワードリセット</h2>
+                <button class="modal-close" onclick="closePasswordModal()">&times;</button>
+            </div>
+            <form id="passwordForm" onsubmit="submitPasswordReset(event)">
+                <input type="hidden" id="resetCompanyId">
+                <p style="margin-bottom:1rem;color:#666" id="resetCompanyLabel">企業名</p>
+                <div class="form-group">
+                    <label for="newPassword">新しいパスワード *</label>
+                    <input type="text" id="newPassword" required placeholder="新しいパスワードを入力">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closePasswordModal()">キャンセル</button>
+                    <button type="submit" class="btn-submit btn-submit-available">変更する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>
