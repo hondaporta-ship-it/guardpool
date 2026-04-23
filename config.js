@@ -1,3 +1,3 @@
 // Supabase設定
-const SUPABASE_URL = 'https://vhvaasqodwztdlhlkthe.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_gBM-opgW9buiZWdZBAJ0uQ_5DmfwJDo';
+const SUPABASE_URL = 'https://lrfaifhmqtxycvytfcuv.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxyZmFpZmhtcXR4eWN2eXRmY3V2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgzMzMzMjgsImV4cCI6MjA1MzkwOTMyOH0.XoFkG_ZulQQNSD5604cGbQ';
